@@ -1,0 +1,20 @@
+---
+import PrayerTime from './PrayerTime.astro';
+import { type PrayerTimeType } from "../../types";
+
+interface Props {
+  prayerTimes: PrayerTimeType[]
+}
+
+const { prayerTimes } = Astro.props;
+---
+
+<div class="bg-[#256B84] p-10 my-36">
+  <div class="flex flex-row justify-between">
+    {
+      prayerTimes.map((time) => (
+       <PrayerTime {...time} />
+      ))
+    }
+  </div>
+</div>

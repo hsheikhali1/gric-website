@@ -1,0 +1,15 @@
+{
+  "site": {
+    "title": "Grand River Islamic Center",
+    "base_url": "https://gric.com",
+    "base_path": "/",
+    "trailing_slash": false,
+    "favicon": "/images/favicon.png",
+    "logo": "/images/logo.png"
+  },
+  "metadata": {
+    "meta_author": "Grand River Islamic Center",
+    "meta_image": "/images/og-image.png",
+    "meta_description": "Grand River Islamic Center"
+  }
+}

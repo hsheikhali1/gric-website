@@ -1,0 +1,50 @@
+---
+import Base from "@/layouts/Base.astro";
+import PrayerBanner from "@/components/PrayerBanner.astro";
+import PrayerCard from "@/components/PrayerCard.astro";
+import JumuaCard from "@/components/JumuaCard.astro";
+import MasjidNews from "@/components/MasjidNews.astro";
+import DonateComponent from "@/components/DonateComponent.astro"
+
+import getPrayerTimes from "../lib/utils/getPrayerTimes";
+
+import type { PrayerTimeType } from "types";
+
+// TODO: generate these times dynamically using an api
+const times: PrayerTimeType[] = []
+const PRAYER_NAMES = new Set<string>(["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"]);
+
+const { data: { timings }} = await getPrayerTimes();
+const timesArray = Object.keys(timings);
+
+const filteredTimes = timesArray.filter((time) => PRAYER_NAMES.has(time));
+
+
+function formatTime(timeString: string) {
+  const [hourString, minute] = timeString.split(":");
+  const hour = +hourString % 24;
+  return (hour % 12 || 12) + ":" + minute + (hour < 12 ? " AM" : " PM");
+}
+
+filteredTimes.forEach((filteredTime) => {
+	times.push({ prayerName: filteredTime, prayerTime: formatTime(timings[filteredTime]), iqama: ""})
+});
+---
+
+<Base>
+	<main>
+		<div class="px-4">
+			<PrayerBanner prayerTimes={times} />
+			<div class="grid grid-cols-2 gap-4 py-36">
+				<PrayerCard />
+				<JumuaCard time="12:45" />
+			</div>
+		</div>
+		<div class="py-36">
+			<MasjidNews />
+		</div>
+		<div class="py-36">
+			<DonateComponent />
+		</div>
+	</main>
+</Base>

@@ -1,0 +1,15 @@
+---
+interface Props {
+  prayerName: string;
+  prayerTime: string;
+  iqama: string;
+}
+
+const { prayerName, prayerTime, iqama } = Astro.props;
+---
+
+<div class="flex flex-col space-y-2">
+  <p class="text-white font-semibold text-base">{prayerName}</p> 
+  <p class="text-white text-xl font-bold">{prayerTime}</p>
+  <p class="text-white text-sm">Iqamah - {iqama}</p>
+</div>
