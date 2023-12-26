@@ -1,5 +1,7 @@
 export interface PrayerTimeType {
   prayerName: string;
   prayerTime: string;
-  iqama: string;
+  currentPrayerTime: string;
+  previousPrayerTime: string;
+  nextPrayerTime: string;
 }

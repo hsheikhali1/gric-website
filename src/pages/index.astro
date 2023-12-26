@@ -14,8 +14,8 @@ import type { PrayerTimeType } from "types";
 const times: PrayerTimeType[] = []
 const PRAYER_NAMES = new Set<string>(["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"]);
 
-const { data: { timings }} = await getPrayerTimes();
-const timesArray = Object.keys(timings);
+const { data } = await getPrayerTimes();
+const timesArray = Object.keys(data.timings);
 
 const filteredTimes = timesArray.filter((time) => PRAYER_NAMES.has(time));
 
@@ -26,17 +26,29 @@ function formatTime(timeString: string) {
   return (hour % 12 || 12) + ":" + minute + (hour < 12 ? " AM" : " PM");
 }
 
-filteredTimes.forEach((filteredTime) => {
-	times.push({ prayerName: filteredTime, prayerTime: formatTime(timings[filteredTime]), iqama: ""})
+filteredTimes.forEach((filteredTime, index) => {
+	const currentTime = data.timings[filteredTime];
+	
+	const previousPrayerTime = data.timings[filteredTimes[index - 1] ?? filteredTimes[index + 5]];
+	const nextPrayerTime = data.timings[filteredTimes[index + 1] ?? filteredTimes[index - 5]];
+	
+	times.push({
+		prayerName: filteredTime,
+		prayerTime: formatTime(data.timings[filteredTime]),
+		currentPrayerTime: currentTime,
+		previousPrayerTime: previousPrayerTime,
+		nextPrayerTime: nextPrayerTime
+	});
+	
 });
 ---
 
 <Base>
-	<main>
-		<div class="px-4">
-			<PrayerBanner prayerTimes={times} />
-			<div class="grid grid-cols-2 gap-4 py-36">
-				<PrayerCard />
+	<main class="px-8 mx-auto">
+		<div class="py-30">
+  		<h2 class="text-2xl font-semibold mb-4">Monday Dec 25th (hijri)</h2>
+			<div class="grid grid-cols-2 gap-4">
+				<PrayerCard prayerTimes={times}/>
 				<JumuaCard time="12:45" />
 			</div>
 		</div>

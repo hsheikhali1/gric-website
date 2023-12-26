@@ -1,21 +1,67 @@
 ---
+import { twMerge } from "tailwind-merge";
+import Clock from "../components/Icons/Clock.astro";
+import type { PrayerTimeType } from "types";
 
+interface Props {
+  prayerTimes?: PrayerTimeType[]
+}
+
+const { prayerTimes } = Astro.props;
+
+function formatTime(timeString: string) {
+  const [hourString, minute] = timeString.split(":");
+  const hour = +hourString % 24;
+  return (hour % 12 || 12) + ":" + minute + (hour < 12 ? " AM" : " PM");
+}
+
+const activeClasses = "text-white bg-[#1AA599] shadow-md";
+
+function getNextPrayerTime(prayerTimes: string[]) {
+  console.log(prayerTimes);
+  const now = new Date();
+
+  // Iterate through the array of prayer times
+  for (const prayerTime of prayerTimes) {
+    // Convert the prayer time string to a Date object
+    const [hours, minutes] = prayerTime.split(':');
+    const prayerDate = new Date();
+    prayerDate.setHours(Number(hours), Number(minutes), 0, 0);
+
+    // Check if the prayer time is in the future
+    if (prayerDate > now) {
+      return prayerTime;
+    }
+  }
+
+  // If all prayer times have passed, return the first prayer time of the next day
+  return prayerTimes[0];
+}
+
+const prayerTimeArray = prayerTimes?.map((time) => time.currentPrayerTime);
+const nextPrayerTime = getNextPrayerTime(prayerTimeArray as string[]);
 ---
 
-<div class="flex flex-col">
-  <h2 class="text-3xl font-semibold">Monday Dec 25th (hijri)</h2>
-  <div class="flex justify-between">
-    <span>Salah</span>
-    <span>Begins</span>
-  </div>
-  <div class="flex flex-col">
-    <div class="flex flex-row justify-between border-2 border-gray-300">
-      <span class="block">Fajr</span>
-      <span class="block">4:00</span>
+<div class="flex flex-col bg-white">
+  <div class="border border-gray-300 p-8 rounded-md">
+    <div class="flex justify-between">
+      <span class="text-lg text-[#1AA599] font-bold mb-2">Salah</span>
+      <span class="text-lg text-[#1AA599] font-bold mb-2">Begins</span>
     </div>
-    <div class="flex flex-row justify-between border-2 border-gray-300">
-      <span class="block">Fajr</span>
-      <span class="block">4:00</span>
+    <div class="flex flex-col space-y-4">
+      {prayerTimes?.map(({
+        prayerName,
+        prayerTime,
+        currentPrayerTime
+      }) => (
+        <div class={twMerge("flex flex-row justify-between border border-[#E6E6E6] p-4 rounded-lg", nextPrayerTime === currentPrayerTime && activeClasses)}>
+          <div class="flex flex-row items-center space-x-2">
+              <Clock />
+            <span class="block text-lg font-bold">{prayerName}</span>
+          </div>
+          <span class="block text-lg font-bold">{prayerTime}</span>
+        </div>
+      ))}
     </div>
   </div>
 </div>
